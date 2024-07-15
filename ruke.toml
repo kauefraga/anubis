@@ -1,0 +1,5 @@
+[tasks.main]
+commands = ["go run cmd/main.go"]
+
+[tasks.build]
+commands = ["go build -ldflags=-w -ldflags=-s -o anubis cmd/main.go"]
