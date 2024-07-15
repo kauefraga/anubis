@@ -8,7 +8,7 @@ import (
 )
 
 type LoadBalancer struct {
-	Algorithm func(servers []string) string
+	Algorithm algorithms.Algorithm
 	Servers   []string
 	Port      uint16
 }
@@ -17,7 +17,7 @@ type LoadBalancerOption func(*LoadBalancer)
 
 func New(opts ...LoadBalancerOption) *LoadBalancer {
 	lb := &LoadBalancer{
-		Algorithm: algorithms.RoundRobin,
+		Algorithm: algorithms.RoundRobin(),
 		Servers:   nil,
 		Port:      4000,
 	}
