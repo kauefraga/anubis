@@ -27,15 +27,19 @@ func Read() Config {
 	}
 
 	if cfg.Version != 1 {
-		log.Fatalln("Error: this Anubis version does not exist")
+		cfg.Version = 1
+	}
+
+	if cfg.Port == 0 {
+		cfg.Port = 4000
+	}
+
+	if cfg.Algorithm != "round-robin" && cfg.Algorithm != "least-connection" && cfg.Algorithm != "weighted-response-time" {
+		cfg.Algorithm = "round-robin"
 	}
 
 	if len(cfg.Servers) == 0 {
 		log.Fatalln("Error: there are no servers in the anubis.toml")
-	}
-
-	if cfg.Algorithm != "round-robin" && cfg.Algorithm != "least-connection" && cfg.Algorithm != "weighted-response-time" {
-		log.Fatalln("Error: this algorithm is not implemented")
 	}
 
 	return cfg
