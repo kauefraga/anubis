@@ -2,25 +2,25 @@ package algorithms
 
 import (
 	"sync"
+	"sync/atomic"
 
 	"github.com/kauefraga/anubis/internal/models"
 )
 
 func LeastConnection() Algorithm {
-	var serversConnectionCount map[models.Servers]int
+	var serversConnectionCount map[models.Servers]*int32
 	var mu sync.Mutex
 	var once sync.Once
 
 	return func(servers []*models.Servers) *models.Servers {
 		// ensures that will be executed one time
 		once.Do(func() {
-			mu.Lock()
-			defer mu.Unlock()
 			if serversConnectionCount == nil {
-				serversConnectionCount = make(map[models.Servers]int)
+				serversConnectionCount = make(map[models.Servers]*int32)
 
 				for _, s := range servers {
-					serversConnectionCount[*s] = 0
+					var count int32 = 0
+					serversConnectionCount[*s] = &count
 				}
 			}
 		})
@@ -32,17 +32,18 @@ func LeastConnection() Algorithm {
 
 		// magic number, minimum connections?
 		// ref: https://www.geeksforgeeks.org/load-balancing-algorithms/#21-least-connection-method-load-balancing-algorithms
-		minConnections := 1_000_000
+		var minConnections int32 = 1_000_000
 
 		for server, count := range serversConnectionCount {
-			if count < minConnections {
-				minConnections = count
+			currenctCount := atomic.LoadInt32(count)
+			if currenctCount < minConnections {
+				minConnections = currenctCount
 				leastConnectionServer = &server
 			}
 		}
 
 		if leastConnectionServer != nil {
-			serversConnectionCount[*leastConnectionServer] = minConnections + 1
+			atomic.AddInt32(serversConnectionCount[*leastConnectionServer], minConnections+1)
 		}
 
 		return leastConnectionServer

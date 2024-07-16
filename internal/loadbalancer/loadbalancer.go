@@ -37,8 +37,9 @@ func (lb *LoadBalancer) Listen() error {
 
 		// You will need parse the url string to url.Url type
 		// Then use httputtil.ReverseProxy(url).Serve(w,r)
-		// I recommend to insert this into a method
 
+		// I thought about creating a temp config, parse the string and then
+		// pass the value for the final config
 		fmt.Fprintln(w, "You are on the server", s)
 	})
 

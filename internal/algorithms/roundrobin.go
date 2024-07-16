@@ -1,7 +1,7 @@
 package algorithms
 
 import (
-	"sync"
+	"sync/atomic"
 
 	"github.com/kauefraga/anubis/internal/models"
 )
@@ -9,21 +9,20 @@ import (
 type Algorithm func(servers []*models.Servers) *models.Servers
 
 func RoundRobin() Algorithm {
-	serverCount := 0
-	var mu sync.Mutex
+	var serverCount int32 = 0
 
 	return func(servers []*models.Servers) *models.Servers {
-		mu.Lock()
-		defer mu.Unlock()
+		// Will loop until the function success
+		for {
+			current := atomic.LoadInt32(&serverCount)
+			next := current + 1
+			if next >= int32(len(servers)) {
+				next = 0
+			}
 
-		if serverCount >= len(servers) {
-			serverCount = 0
+			if atomic.CompareAndSwapInt32(&serverCount, current, next) {
+				return servers[current]
+			}
 		}
-
-		currentServer := servers[serverCount]
-
-		serverCount += 1
-
-		return currentServer
 	}
 }
