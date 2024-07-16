@@ -27,7 +27,7 @@ func LeastConnection() Algorithm {
 
 		mu.Lock()
 		defer mu.Unlock()
-
+    
 		var leastConnectionServer *models.Servers // least connection server
 
 		// magic number, minimum connections?

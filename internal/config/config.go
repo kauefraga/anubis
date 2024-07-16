@@ -15,7 +15,7 @@ type Config struct {
 	Servers   []*models.Servers
 }
 
-func Read() Config {
+func Read() *Config {
 	doc, err := os.ReadFile("anubis.toml")
 	if err != nil {
 		log.Fatalln("Error:", err)
@@ -27,21 +27,5 @@ func Read() Config {
 		log.Fatalln("Error:", err)
 	}
 
-	if cfg.Version != 1 {
-		cfg.Version = 1
-	}
-
-	if cfg.Port == 0 {
-		cfg.Port = 4000
-	}
-
-	if cfg.Algorithm != "round-robin" && cfg.Algorithm != "least-connection" && cfg.Algorithm != "weighted-response-time" {
-		cfg.Algorithm = "round-robin"
-	}
-
-	if len(cfg.Servers) == 0 {
-		log.Fatalln("Error: there are no servers in the anubis.toml")
-	}
-
-	return cfg
+	return &cfg
 }
