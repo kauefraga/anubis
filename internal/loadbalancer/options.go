@@ -16,8 +16,8 @@ func WithServers(servers []string) LoadBalancerOption {
 
 func WithAlgorithm(algorithm string) LoadBalancerOption {
 	return func(lb *LoadBalancer) {
-		lb.Algorithm = algorithms.RoundRobin()
-
-		// TODO add least connection and weighted response time algorithms
+		if algorithm == "least-connection" {
+			lb.Algorithm = algorithms.LeastConnection()
+		}
 	}
 }
