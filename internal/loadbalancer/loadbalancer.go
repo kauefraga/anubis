@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/kauefraga/anubis/internal/algorithms"
+	"github.com/kauefraga/anubis/internal/models"
 )
 
 type LoadBalancer struct {
 	Algorithm algorithms.Algorithm
-	Servers   []string
+	Servers   []*models.Servers
 	Port      uint16
 }
 
@@ -31,7 +32,12 @@ func New(opts ...LoadBalancerOption) *LoadBalancer {
 
 func (lb *LoadBalancer) Listen() error {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		s := lb.Algorithm(lb.Servers)
+		lbServers := lb.Servers
+		s := lb.Algorithm(lbServers)
+
+		// You will need parse the url string to url.Url type
+		// Then use httputtil.ReverseProxy(url).Serve(w,r)
+		// I recommend to insert this into a method
 
 		fmt.Fprintln(w, "You are on the server", s)
 	})

@@ -1,18 +1,34 @@
 package algorithms
 
+import (
+	"sync"
+
+	"github.com/kauefraga/anubis/internal/models"
+)
+
 func LeastConnection() Algorithm {
-	var serversConnectionCount map[string]int
+	var serversConnectionCount map[models.Servers]int
+	var mu sync.Mutex
+	var once sync.Once
 
-	return func(servers []string) string {
-		if serversConnectionCount == nil {
-			serversConnectionCount = make(map[string]int, len(servers))
+	return func(servers []*models.Servers) *models.Servers {
+		// ensures that will be executed one time
+		once.Do(func() {
+			mu.Lock()
+			defer mu.Unlock()
+			if serversConnectionCount == nil {
+				serversConnectionCount = make(map[models.Servers]int)
 
-			for _, s := range servers {
-				serversConnectionCount[s] = 0
+				for _, s := range servers {
+					serversConnectionCount[*s] = 0
+				}
 			}
-		}
+		})
 
-		var leastConnectionServer string // least connection server
+		mu.Lock()
+		defer mu.Unlock()
+
+		var leastConnectionServer *models.Servers // least connection server
 
 		// magic number, minimum connections?
 		// ref: https://www.geeksforgeeks.org/load-balancing-algorithms/#21-least-connection-method-load-balancing-algorithms
@@ -21,12 +37,12 @@ func LeastConnection() Algorithm {
 		for server, count := range serversConnectionCount {
 			if count < minConnections {
 				minConnections = count
-				leastConnectionServer = server
+				leastConnectionServer = &server
 			}
 		}
 
-		if leastConnectionServer != "" {
-			serversConnectionCount[leastConnectionServer] = minConnections + 1
+		if leastConnectionServer != nil {
+			serversConnectionCount[*leastConnectionServer] = minConnections + 1
 		}
 
 		return leastConnectionServer
