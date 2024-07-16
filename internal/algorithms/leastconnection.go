@@ -1,9 +1,15 @@
 package algorithms
 
+import "sync"
+
 func LeastConnection() Algorithm {
 	var serversConnectionCount map[string]int
+	var m sync.Mutex
 
 	return func(servers []string) string {
+		m.Lock()
+		defer m.Unlock()
+
 		if serversConnectionCount == nil {
 			serversConnectionCount = make(map[string]int, len(servers))
 
@@ -12,7 +18,7 @@ func LeastConnection() Algorithm {
 			}
 		}
 
-		var leastConnectionServer string // least connection server
+		var leastConnectionServer string
 
 		// magic number, minimum connections?
 		// ref: https://www.geeksforgeeks.org/load-balancing-algorithms/#21-least-connection-method-load-balancing-algorithms

@@ -31,9 +31,11 @@ func New(opts ...LoadBalancerOption) *LoadBalancer {
 
 func (lb *LoadBalancer) Listen() error {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		s := lb.Algorithm(lb.Servers)
+		go func() {
+			s := lb.Algorithm(lb.Servers)
 
-		fmt.Fprintln(w, "You are on the server", s)
+			fmt.Fprintln(w, "You are on the server", s)
+		}()
 	})
 
 	fmt.Printf("Listening on http://localhost:%d\n", lb.Port)
