@@ -31,11 +31,22 @@ func New(opts ...LoadBalancerOption) *LoadBalancer {
 
 func (lb *LoadBalancer) Listen() error {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		go func() {
-			s := lb.Algorithm(lb.Servers)
+		ch := make(chan string)
 
-			fmt.Fprintln(w, "You are on the server", s)
-		}()
+		go func(ch chan string) {
+			server := lb.Algorithm(lb.Servers)
+
+			fmt.Println("Proxy request to", server) // TODO: remove this debug
+
+			ch <- server
+		}(ch)
+
+		server, ok := <-ch
+
+		if ok {
+			close(ch)
+			http.Redirect(w, r, server, http.StatusSeeOther)
+		}
 	})
 
 	fmt.Printf("Listening on http://localhost:%d\n", lb.Port)
