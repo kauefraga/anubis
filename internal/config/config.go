@@ -12,7 +12,7 @@ type Config struct {
 	Version   int
 	Port      uint16
 	Algorithm string
-	Servers   []*models.Servers
+	Servers   []*models.Server
 }
 
 func Read() *Config {

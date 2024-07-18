@@ -7,15 +7,15 @@ import (
 )
 
 func LeastConnection() Algorithm {
-	var serversConnectionCount map[models.Servers]int
+	var serversConnectionCount map[models.Server]int
 	var mu sync.Mutex
 	var once sync.Once
 
-	return func(servers []*models.Servers) *models.Servers {
+	return func(servers []*models.Server) *models.Server {
 		// ensures that will be executed one time
 		once.Do(func() {
 			if serversConnectionCount == nil {
-				serversConnectionCount = make(map[models.Servers]int)
+				serversConnectionCount = make(map[models.Server]int)
 
 				for _, s := range servers {
 					serversConnectionCount[*s] = 0
@@ -26,7 +26,7 @@ func LeastConnection() Algorithm {
 		mu.Lock()
 		defer mu.Unlock()
 
-		var leastConnectionServer *models.Servers // least connection server
+		var leastConnectionServer *models.Server // least connection server
 
 		// magic number, minimum connections?
 		// ref: https://www.geeksforgeeks.org/load-balancing-algorithms/#21-least-connection-method-load-balancing-algorithms

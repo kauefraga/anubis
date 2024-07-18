@@ -2,7 +2,10 @@ package loadbalancer
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 
 	"github.com/kauefraga/anubis/internal/algorithms"
 	"github.com/kauefraga/anubis/internal/models"
@@ -10,7 +13,7 @@ import (
 
 type LoadBalancer struct {
 	Algorithm algorithms.Algorithm
-	Servers   []*models.Servers
+	Servers   []*models.Server
 	Port      uint16
 }
 
@@ -35,12 +38,12 @@ func (lb *LoadBalancer) Listen() error {
 		lbServers := lb.Servers
 		s := lb.Algorithm(lbServers)
 
-		// You will need parse the url string to url.Url type
-		// Then use httputtil.ReverseProxy(url).Serve(w,r)
+		u, err := url.Parse(s.Url)
+		if err != nil {
+			log.Println("Error: failed parsing server URL")
+		}
 
-		// I thought about creating a temp config, parse the string and then
-		// pass the value for the final config
-		fmt.Fprintln(w, "You are on the server", s)
+		httputil.NewSingleHostReverseProxy(u).ServeHTTP(w, r)
 	})
 
 	fmt.Printf("Listening on http://localhost:%d\n", lb.Port)

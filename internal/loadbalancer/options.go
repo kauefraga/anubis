@@ -11,7 +11,7 @@ func WithPort(port uint16) LoadBalancerOption {
 	}
 }
 
-func WithServers(servers []*models.Servers) LoadBalancerOption {
+func WithServers(servers []*models.Server) LoadBalancerOption {
 	return func(lb *LoadBalancer) {
 		lb.Servers = servers
 	}

@@ -4,8 +4,8 @@ import (
 	"sync"
 )
 
-// the only way that I found to avoid recycle import error
-type Servers struct {
+// Avoid recycle import error (loadbalancer <-> algorithms)
+type Server struct {
 	Url  string
 	Sync *sync.Mutex
 }
