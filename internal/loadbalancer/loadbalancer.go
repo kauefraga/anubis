@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/kauefraga/anubis/internal/algorithms"
+	"github.com/kauefraga/anubis/internal/models"
 )
 
 type LoadBalancer struct {
 	Algorithm algorithms.Algorithm
-	Servers   []string
+	Servers   []*models.Servers
 	Port      uint16
 }
 
@@ -31,22 +32,15 @@ func New(opts ...LoadBalancerOption) *LoadBalancer {
 
 func (lb *LoadBalancer) Listen() error {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		ch := make(chan string)
+		lbServers := lb.Servers
+		s := lb.Algorithm(lbServers)
 
-		go func(ch chan string) {
-			server := lb.Algorithm(lb.Servers)
+		// You will need parse the url string to url.Url type
+		// Then use httputtil.ReverseProxy(url).Serve(w,r)
 
-			fmt.Println("Proxy request to", server) // TODO: remove this debug
-
-			ch <- server
-		}(ch)
-
-		server, ok := <-ch
-
-		if ok {
-			close(ch)
-			http.Redirect(w, r, server, http.StatusSeeOther)
-		}
+		// I thought about creating a temp config, parse the string and then
+		// pass the value for the final config
+		fmt.Fprintln(w, "You are on the server", s)
 	})
 
 	fmt.Printf("Listening on http://localhost:%d\n", lb.Port)

@@ -1,6 +1,9 @@
 package loadbalancer
 
-import "github.com/kauefraga/anubis/internal/algorithms"
+import (
+	"github.com/kauefraga/anubis/internal/algorithms"
+	"github.com/kauefraga/anubis/internal/models"
+)
 
 func WithPort(port uint16) LoadBalancerOption {
 	return func(lb *LoadBalancer) {
@@ -8,7 +11,7 @@ func WithPort(port uint16) LoadBalancerOption {
 	}
 }
 
-func WithServers(servers []string) LoadBalancerOption {
+func WithServers(servers []*models.Servers) LoadBalancerOption {
 	return func(lb *LoadBalancer) {
 		lb.Servers = servers
 	}
