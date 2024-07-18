@@ -18,7 +18,7 @@ type LoadBalancerOption func(*LoadBalancer)
 
 func New(opts ...LoadBalancerOption) *LoadBalancer {
 	lb := &LoadBalancer{
-		Algorithm: algorithms.RoundRobin(),
+		Algorithm: nil,
 		Servers:   nil,
 		Port:      4000,
 	}

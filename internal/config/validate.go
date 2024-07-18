@@ -36,7 +36,7 @@ func (cfg *Config) Validate() *Config {
 	}
 
 	for _, s := range cfg.Servers {
-		if !isServerValid(s) {
+		if !isServerValid(s.Url) {
 			log.Fatalln("Error: the server", s, "is invalid")
 		}
 	}
