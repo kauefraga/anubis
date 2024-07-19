@@ -12,7 +12,6 @@ func RoundRobin(servers []*models.Server) Algorithm {
 	var serverCount int32 = 0
 
 	return func() *models.Server {
-		// Will loop until the function success
 		for {
 			current := atomic.LoadInt32(&serverCount)
 			next := current + 1
