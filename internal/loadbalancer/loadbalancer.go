@@ -35,8 +35,7 @@ func New(opts ...LoadBalancerOption) *LoadBalancer {
 
 func (lb *LoadBalancer) Listen() error {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		lbServers := lb.Servers
-		s := lb.Algorithm(lbServers)
+		s := lb.Algorithm()
 
 		u, err := url.Parse(s.Url)
 		if err != nil {

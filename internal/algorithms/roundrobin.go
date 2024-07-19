@@ -6,12 +6,12 @@ import (
 	"github.com/kauefraga/anubis/internal/models"
 )
 
-type Algorithm func(servers []*models.Server) *models.Server
+type Algorithm func() *models.Server
 
-func RoundRobin() Algorithm {
+func RoundRobin(servers []*models.Server) Algorithm {
 	var serverCount int32 = 0
 
-	return func(servers []*models.Server) *models.Server {
+	return func() *models.Server {
 		// Will loop until the function success
 		for {
 			current := atomic.LoadInt32(&serverCount)

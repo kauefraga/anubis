@@ -20,11 +20,11 @@ func WithServers(servers []*models.Server) LoadBalancerOption {
 func WithAlgorithm(algorithm string) LoadBalancerOption {
 	return func(lb *LoadBalancer) {
 		if algorithm == "round-robin" {
-			lb.Algorithm = algorithms.RoundRobin()
+			lb.Algorithm = algorithms.RoundRobin(lb.Servers)
 		}
 
 		if algorithm == "least-connection" {
-			lb.Algorithm = algorithms.LeastConnection()
+			lb.Algorithm = algorithms.LeastConnection(lb.Servers)
 		}
 	}
 }
