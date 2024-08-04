@@ -8,29 +8,42 @@
 
 ## Configuration
 
-Create a file called `anubis.toml` and define the following attributes:
-
 - `version` - Anubis version (default: `1`)
 - `port` - Anubis port (default: `4000`)
 - `algorithm` - algorithm you want to use, `round-robin`, `least-connection` or `weighted-response-time` (default: `round-robin`)
 - `servers` - array of servers address
 
+###### Algorithm Alias
+
+- `round-robin`, `rr`
+- `least-connection`, `lc`
+- `weighted-response-time`, `wrt`
+
 Example of minimal configuration:
 
 ```toml
-servers = ['localhost:4001', 'localhost:4002', 'localhost:4003']
+[[servers]]
+url = 'http://localhost:4001'
+
+[[servers]]
+url = 'http://localhost:4002'
 ```
 
-Resulting in `version = 1`, `port = 4000`, `algorithm = 'round-robin'` and  `servers = ['localhost:4001', 'localhost:4002', 'localhost:4003']`.
+Resulting in `version = 1`, `port = 4000`, `algorithm = 'round-robin'` and  `servers = ['localhost:4001', 'localhost:4002']`.
 
 Example of full configuration:
 
 ```toml
 version = 1
 port = 3333
-algorithm = 'round-robin'
-servers = ['localhost:3334', 'localhost:3335', 'localhost:3336']
-```
+algorithm = 'least-connection'
 
-> [!IMPORTANT]
-> More coming soon...
+[[servers]]
+url = 'http://localhost:3334'
+
+[[servers]]
+url = 'http://localhost:3335'
+
+[[servers]]
+url = 'http://localhost:3336'
+```
